@@ -20,14 +20,29 @@ generateBtn.addEventListener("click", () => {
     //2) user is prompted for password requirements   
     // DONE add validation to password length
     // create a prompt to ask pword length 8-128 - assign to a let
-    // FIXME: clicking cancel prompts the too short alert as well- its midnight, im going to bed.
     const passwordLength = prompt("How long would you like your password to be? type a number between 8 and 128 to set character length");
-    if (passwordLength >= 8) {
-        alert(`password length will be${passwordLength}characters long.`);
-    } else if (passwordLength <= 7)
-        alert("Your password is too short, make it between 8 - 128 characters");
-    return;
+    console.log("if / else from original user prompt" , passwordLength)
     
+    if (passwordLength === null)
+    {
+        alert("See you next time.")
+        return;
+    }
+    if (passwordLength >= 8) 
+    {
+        alert(`password length will be" ${passwordLength} "characters long.`);
+    } 
+    if (passwordLength <= 7)
+    {
+        alert("Your password is too short, make it between 8 - 128 characters");
+        return;
+    }    
+    
+       
+
+    
+    
+
     // create a confirm for lowercase - assign to a let
     const passwordLower = confirm("Does your password need to have lowercase letters? ok= yes, cancel= no");
     // create a confirm for uppercase - assign to a let
