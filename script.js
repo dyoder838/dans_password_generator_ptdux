@@ -103,9 +103,11 @@ function generatePassword(lower, upper, number, symbol, length) {
                 generatedPassword += randomFunc[funcName]();
             });
         }
-
+            //this keeps the objects from being added to the length variable
         console.log(generatedPassword.slice(0, length));
-        const finalPassword = generatedPassword
+        const finalPassword = generatedPassword.slice(0, length);
+
+        return finalPassword
     }
 
 
