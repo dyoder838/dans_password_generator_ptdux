@@ -90,8 +90,8 @@ function generatePassword(lower, upper, number, symbol, length) {
  
 //TODO: for loop to pick from the filtered array at random until the length variable has bees reached - calls from the 5 random generators
         // this is the for loop that randomizes the array, represented here by the variable typesCount, note. length is used here as our 5th variable 
-        //i+= typesCount increments by the filtered array items i = 1 because of the array, if i=0 you would get an extra item
-        for (let i = 1; i< length; i+= typesCount) {
+        //i+= typesCount increments by the filtered array items 
+        for (let i = 0; i< length; i+= typesCount) {
             typesArr.forEach(type => {
                 //funcName holds the info from 4 of the 5 arrays upper, lower, number, symbol.
                 const funcName = Object.keys(type)[0];
@@ -103,6 +103,9 @@ function generatePassword(lower, upper, number, symbol, length) {
                 generatedPassword += randomFunc[funcName]();
             });
         }
+
+        console.log(generatedPassword.slice(0, length));
+        const finalPassword = generatedPassword
     }
 
 
