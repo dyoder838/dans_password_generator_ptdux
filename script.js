@@ -38,23 +38,23 @@ generateBtn.addEventListener("click", () => {
         return;
     }    
     
-    // create a confirm for lowercase - assign to a let
+    // create a confirm for lowercase - assign to a const
     const passwordLower = confirm("Does your password need to have lowercase letters? ok= yes, cancel= no");
-    // create a confirm for uppercase - assign to a let
+    // create a confirm for uppercase - assign to a const
     const passwordUpper = confirm("does your password need to contain uppercase letters? ok= yes, cancel= no");
-    // create a confirm for numbers - assign to a let
+    // create a confirm for numbers - assign to a const
     const passwordNumbers = confirm("does your password need to contain numbers? ok= yes, cancel= no");
-    // create a confirm for special - assign to a let
+    // create a confirm for special - assign to a const
     const passwordCharacter = confirm("does your password need to contain special characters? ( !#$%&'()*+,-./:;<=>?@[\]^_`{|}~ ) ok= yes, cancel= no");
-    // DONE after the prompts are done, the password needs to be generated
+    // after the prompts are done, the password needs to be generated
 
     // Final results from user
     console.log("user data input:" , passwordLower, passwordUpper, passwordNumbers, passwordCharacter, passwordLength);
 
-    //3 user data is stored 
-    // DONE create a conditional situation that saves the user selection - write the users ticket - make it a let
-    // DONE create new variable that holds chosen characters
-    // this holds the users input for each confirm - 
+    // user data is stored 
+    // create a conditional situation that saves the user selection - in this case, user input is stored as true or false
+    // here, we kill two birds with one stone, we store the selections in a function that when called will display the
+    // password in the textarea. 
     passwordText.innerText = generatePassword(
         passwordLower,
         passwordUpper,
@@ -66,32 +66,32 @@ generateBtn.addEventListener("click", () => {
 
 ////////////////end of button function///////////////////
 //4 user data gets turned into a password
-
+// define the above function generatePassword
 // this function generates the password using our 5 variables
+// here we rename the above variables - the order needs to be the same as above, just remove "password"
 function generatePassword(lower, upper, number, symbol, length) {
 
     //initialize password variable - this will be the final password
     let generatedPassword = "";
 
-    // user data gets turned into an array so the computer can translate to index numbers.
-    // create a variable for the user input.
-    const typesCount = lower + upper + number + symbol;
-
-    // use this to check for functionality, this should count how many times true was logged
-    console.log("typesCount: ", typesCount);
-
-    // create array to hold final results
-    // filter out false 
-    // turn the variable into a useable array, .filter item, gets rid of the false items... the things the user said no to 
+    // Objective: user data gets turned into an array to narrow down which randomizers to use.
+        
+        // an array of objects is needed, that has keys and values associated with them - key being lower, upper ect..
+        // and the value being true or false. 
+    
+    // Variables the user answered false to need to be removed
+    // Filter function is used to remove objects that contain values of 0 - the value of false
     const typesArr = [{ lower }, { upper }, { number }, { symbol }].filter
         (
             item => Object.values(item)[0]
         );
-
-    //make sure the array is in the correct order - add curly brackets so console displays all of the object information
-    console.log("typesArr; ", typesArr);
-
-    // this is what happens when the user makes no selections
+    
+        // What happens if a user answers false to all variables?
+    
+    // Create a variable for the user's original inputs - the variable will show how many were marked as true.
+    // If the variable reads 0 - the user made no selections.
+    const typesCount = lower + upper + number + symbol;
+    
     if (typesCount === 0) {
         alert("you made no password requirement selections, press ok and try again; making selections this time")
         return "";
@@ -108,12 +108,12 @@ function generatePassword(lower, upper, number, symbol, length) {
             //funcName now holds randomized keys in the amount that the user specified - keys are referred back to line 8 randomFunc, they connect to the randomizing functions on line 132
             const funcName = Object.keys(type)[0];
 
-            // you result should be functions with the names lower, upper, number, symbol -- in the amount of characters in the length variable
+            // The result should be functions with the names lower, upper, number, symbol -- in the amount of characters in the length variable
             console.log("funcName: ", funcName);
 
             
             // randomFunc was created as a constant on line 8 that connects the key properties to the randomizers starting on line 132
-            // so, here the keys in funcName are accociated back with randomFunc, and added to the variable generatedPassword from line 74 (which = "")
+            // so, here the keys in funcName are associated back with randomFunc, and added to the variable generatedPassword from line 74 (which = "")
             generatedPassword += randomFunc[funcName]();
         });
     }
