@@ -8,10 +8,11 @@ const passwordText = document.querySelector("#password");
 
 ///////  note: this is not the original order this app was coded in, I felt it important to place it here for conceptual understanding.  ///////////
 // This is a practice in "Inception", we are randomizing up to 4 parameters and then randomizing those into a user defined length of characters. 
-// "randomFunc" holds 4 functions; our first layer of "Inception", those functions are each associated with a named key.
-// "funcName" (defined later) randomizes the selected keys; our second layer of "Inception". 
-// "funcName" tells randomFunc how many times to run each of its functions (the user selected password length) in a random order.
-// each time a function from randomFunc fires, its value is stored in generatedPassword (defined later).
+// "randomFunc" is an object that holds 4 key: function pairs (much like object key:value pairs); when a key is called its "value" function fires - resulting in a single character generation. 
+// our first layer of "Inception", is the randomized functions (starting on line 27) 
+// "randomTypesArr" (defined later) randomizes the selected "keys" into an array; our second layer of "Inception". it ultimately creates "funcName". 
+// "funcName" is the "key" in randomFunc; which causes its associated "value" function to fire.
+// each time a function from randomFunc fires, its return is stored in generatedPassword (defined later) as a string.
 const randomFunc = {
     lower: getRandomLower,
     upper: getRandomUpper,
@@ -21,7 +22,7 @@ const randomFunc = {
 
 ///////////////////////////////////////////////////////// functions to generate parameters /////////////////////////////////////////////////
 
-// create 5 functions that return parameters - one for each password parameter
+// create 4 functions that return parameters - one for each password parameter
 
 // lowercase generator function... (character map) http://net-comber.com/charset.html 26 is for letters in the alphabet , 97 is the reference to the index of the character code(what the index number of lowercase letters are - this creates a sub section of the existing array)** this list starts at spot 97, and proceeds at random up 26 index numbers(the amount of letters in the alphabet)
 function getRandomLower() {
@@ -50,7 +51,7 @@ console.log(getRandomSymbols());
 
 ///////////////////////////////////////////////////////////// Collect user data /////////////////////////////////////////////////////////
 
- 
+
 // Add event listener to generate button
 generateBtn.addEventListener("click", () => {
 
@@ -58,7 +59,7 @@ generateBtn.addEventListener("click", () => {
 
     // create a prompt to ask password length 8-128 - assign to a let
     const passwordLength = prompt("How long would you like your password to be? type a number between 8 and 128 to set character length");
-    console.log("if / else from original user prompt", passwordLength)
+
     //add validation to password length
     if (passwordLength === null) {
         alert("See you next time.")
@@ -82,10 +83,7 @@ generateBtn.addEventListener("click", () => {
     const passwordCharacter = confirm("does your password need to contain special characters? ( !#$%&'()*+,-./:;<=>?@[\]^_`{|}~ ) ok= yes, cancel= no");
     // after the prompts are done, the password needs to be generated
 
-    // Final results from user
-    console.log("user data input:", passwordLower, passwordUpper, passwordNumbers, passwordCharacter, passwordLength);
-
-    // user data is stored in the constant variable from line 7, that also displays the text in the HTML
+    // user data is stored in the constant variable from line 7, that also displays the text in the DOM
     // create a conditional situation that saves the user selection - in this case, user input is stored as true or false
     // here, we kill two birds with one stone, we store the selections in a function that when called will display the
     // password in the textarea. 
@@ -101,9 +99,9 @@ generateBtn.addEventListener("click", () => {
 
 ///////////////////////////////////////// User data gets turned into a password ///////////////////////////////////////////
 
-// define the above function "generatePassword"
+// define the above function "generatePassword" (line 93)
 // this function generates the password using our 5 variable user inputs 
-// rename the parameters to the keys from the variable "randomFunc" on line 15 
+// rename the parameters to the keys from the object variable "randomFunc" on line 15 
 function generatePassword(lower, upper, number, symbol, length) {
 
     // initialize password variable - this will be the 2nd to final password. 
@@ -122,7 +120,7 @@ function generatePassword(lower, upper, number, symbol, length) {
         );
 
     // What happens if a user answers false to all variables?
-
+    console.log("typesArr: ", typesArr)
     // Create a variable for the user's original inputs - the variable will show how many were marked as true.
     // If the variable reads 0 - the user made no selections.
     const typesCount = lower + upper + number + symbol;
@@ -132,29 +130,35 @@ function generatePassword(lower, upper, number, symbol, length) {
         return "";
     };
 
-   
-    // use a for loop to pick from the filtered array at random until the length variable has been reached - calls from the 4 random generators
-    // this is the for loop that randomizes the array, represented here by the variable typesCount, note. length is used here as our 5th parameter from the user 
-    // i+= typesCount increments by the filtered array items 
-    for (let i = 0; i < length; i += typesCount) {
-        typesArr.forEach(type => {
-            // funcName now holds randomized keys in the amount that the user specified - keys are referred back to line 15 randomFunc, they connect to the randomizing functions on line 27
-            const funcName = Object.keys(type)[0];
-
-            // The result should be functions with the names lower, upper, number, symbol -- in the amount of characters in the length variable
-            console.log("funcName: ", funcName);
-
-            // randomFunc was created as a constant on line 15 that connects the key properties to the randomizers starting on line 27
-            // so, here the keys in funcName are associated back with randomFunc, and added to the variable generatedPassword from line 110 (which = "")
-            // meaning: randomFunc holds 4 functions, funcName tells randomFunc how many times to run each of its functions (that the user selected) at random.
-            // each time a function from randomFunc fires, its value is stored in generatedPassword. 
-            generatedPassword += randomFunc[funcName]();
-        });
+    // now the "typesArr" needs to be randomized so that the password wont be a repeating pattern of character type.
+    // pick from the filtered typesArr at random
+    function randomTypesArr() {
+        return typesArr[Math.floor(Math.random() * typesArr.length)];
     }
+
+    // create an array to hold the new character types in 
+    let finalRandomTypeArr = []
+
+    // loop over the randomTypesArr function for the length of the password, and push each iteration to the finalRandomTypeArr
+    for (i = 0; i < length; i++) {
+
+        finalRandomTypeArr.push(randomTypesArr(i))
+    }
+
+    // the keys are no longer needed " {upper:true} " in the object key pairs - so forEach object the keys are removed and stored in a variable called funcName
+    finalRandomTypeArr.forEach(type => {
+        
+        // this funcName will be used as keys to trigger our random character generators through "randomFunc" on line 15
+        const funcName = Object.keys(type)[0];
+
+        // funcName needs to be combined with randomFunc to so randomFunc triggers the associated function - instead of object key: value pairs there are now object key: function pairs.
+
+        // here we declare the association of randomFunc and funcName and call the function as it is looped over, the resulting character is added to generatedPassword as a string in each iteration.  
+        generatedPassword += randomFunc[funcName]();
+    });
+
     // filter generatedPassword for errors
-    // this keeps the objects from being added to the length variable
-    console.log(generatedPassword.slice(0, length));
-    // create the finalPassword from the filtered generatedPassword
+    // create the finalPassword from the filtered generatedPassword and return it so the function populates it to the DOM via line 92
     const finalPassword = generatedPassword.slice(0, length);
 
     return finalPassword
